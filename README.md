@@ -1,13 +1,15 @@
 # ArxivSDK
 
-A small, synchronous Python SDK for interacting with the arXiv Atom API. The SDK provides typed models, a fluent query builder, a simple HTTP client, a small category enum, and PDF download helpers.
+A small Python SDK for interacting with the arXiv Atom API. The SDK provides typed models, a fluent query builder, synchronous and asynchronous HTTP clients, an expanded category taxonomy, PDF processing, and advanced query options.
 
 **Quick overview**
-- `ArxivClient` ([ArxivSDK/client.py](ArxivSDK/client.py)): main HTTP client. Methods: `search()`, `get_by_id()`, `download_pdf()`.
-- `QueryBuilder` ([ArxivSDK/query.py](ArxivSDK/query.py)): fluent builder for arXiv `search_query` strings (title, author, abstract, category, boolean ops, date ranges, sorting).
+- `ArxivClient` ([ArxivSDK/client.py](ArxivSDK/client.py)): synchronous HTTP client. Methods: `search()`, `get_by_id()`, `download_pdf()`.
+- `AsyncArxivClient` ([ArxivSDK/async_client.py](ArxivSDK/async_client.py)): asynchronous HTTP client with rate limiting (1 req/3 sec).
+- `QueryBuilder` ([ArxivSDK/query.py](ArxivSDK/query.py)): fluent builder for arXiv `search_query` strings (title, author, abstract, comment, journal_ref, report_number, doi, category, boolean ops, date ranges, sorting).
 - `models` ([ArxivSDK/models.py](ArxivSDK/models.py)): Pydantic v2 models `ArxivPaper`, `Author`, `Link`, and `ArxivResultSet`.
 - `errors` ([ArxivSDK/errors.py](ArxivSDK/errors.py)): SDK-specific exceptions (`ArxivAPIError`, `ArxivNetworkError`, `ArxivParseError`, `ArxivDownloadError`).
-- `categories` ([ArxivSDK/categories.py](ArxivSDK/categories.py)): small `Category` Enum and descriptions map for common arXiv category codes.
+- `categories` ([ArxivSDK/categories.py](ArxivSDK/categories.py)): expanded `Category` Enum with full arXiv taxonomy, search helpers, and descriptions.
+- `ArxivPDFProcessor` ([ArxivSDK/pdf_processor.py](ArxivSDK/pdf_processor.py)): PDF text/table extraction and metadata using PyMuPDF.
 
 **Design principles**
 - Synchronous by default (requests + feedparser). Easy to extend for async in future.
@@ -45,6 +47,48 @@ path = client.download_pdf(paper, "./downloads", overwrite=False)
 print("Saved to", path)
 ```
 
+Async usage:
+
+```python
+import asyncio
+from arxiv_sdk.async_client import AsyncArxivClient
+
+async def main():
+    client = AsyncArxivClient()
+    try:
+        qb = QueryBuilder().title("deep learning").and_().author("Goodfellow")
+        results = await client.search(qb, max_results=10)
+        for paper in results.entries:
+            print(paper.title)
+    finally:
+        await client.close()
+
+asyncio.run(main())
+```
+
+Category search:
+
+```python
+from arxiv_sdk.categories import search_categories
+results = search_categories("machine learning")
+print(results)  # List of (code, description)
+```
+
+PDF processing:
+
+```python
+from arxiv_sdk.pdf_processor import ArxivPDFProcessor
+processor = ArxivPDFProcessor()
+text = processor.extract_text("path/to/paper.pdf")
+tables = processor.extract_tables("path/to/paper.pdf")
+```
+
+Advanced queries:
+
+```python
+qb = QueryBuilder().title("quantum").comment("review").doi("10.1234/example").date_range("last week", "today")
+```
+
 Filename & storage behavior
 ---------------------------
 - Files are saved under a hub path you provide as `dest_path`.
@@ -62,11 +106,13 @@ Testing
 -------
 - Unit tests live under `ArxivSDK/tests/`.
 - Live integration tests that make real API calls are guarded by the environment variable `ARXIV_SDK_RUN_LIVE_TESTS=1` — set it to run live queries.
+- Async tests require `pytest-asyncio`.
 - Run unit tests for the SDK with:
 
 ```bash
 export PYTHONPATH=$(pwd)
 pip install -r ArxivSDK/requirements.txt
+pip install aiohttp PyMuPDF  # for optional features
 pytest ArxivSDK/tests -q
 ```
 
@@ -81,5 +127,5 @@ Contributing
 
 License & notes
 ---------------
-This repository includes minimal dependencies (requests, feedparser, pydantic). The SDK is intended as an easy-to-use layer over the arXiv Atom API — follow arXiv API rules (rate limits and polite querying).
+This repository includes minimal dependencies (requests, feedparser, pydantic). Optional dependencies: aiohttp for async, PyMuPDF for PDF processing. The SDK is intended as an easy-to-use layer over the arXiv Atom API — follow arXiv API rules (rate limits and polite querying).
 # ArxivSDK

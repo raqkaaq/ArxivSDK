@@ -31,3 +31,9 @@ def test_today_and_date_range_conflict():
         assert False, "Should raise ValueError"
     except ValueError:
         pass
+
+
+def test_doi():
+    qb = QueryBuilder().doi("10.1234/test")
+    s = qb.build()
+    assert 'doi:"10.1234/test"' in s

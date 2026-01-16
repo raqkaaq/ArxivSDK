@@ -49,8 +49,8 @@ class QueryBuilder:
         self.parts.append(f"cat:{_quote(cat)}")
         return self
 
-    def report_number(self, rn: str) -> "QueryBuilder":
-        self.parts.append(f"rn:{_quote(rn)}")
+    def doi(self, doi: str) -> "QueryBuilder":
+        self.parts.append(f"doi:{_quote(doi)}")
         return self
 
     def and_(self) -> "QueryBuilder":
@@ -78,6 +78,17 @@ class QueryBuilder:
         return self
 
     def _parse_date(self, date_input: str) -> datetime:
+        # Handle relative dates
+        if date_input.lower() in ("today", "now"):
+            return datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
+        elif date_input.lower() == "yesterday":
+            return (datetime.now(timezone.utc) - timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
+        elif "last week" in date_input.lower():
+            return (datetime.now(timezone.utc) - timedelta(weeks=1)).replace(hour=0, minute=0, second=0, microsecond=0)
+        elif "last month" in date_input.lower():
+            now = datetime.now(timezone.utc)
+            return (now - timedelta(days=30)).replace(hour=0, minute=0, second=0, microsecond=0)
+
         if _dateutil_parser:
             dt = _dateutil_parser.parse(date_input)
             if dt.tzinfo is None:
@@ -86,8 +97,9 @@ class QueryBuilder:
             else:
                 dt = dt.astimezone(timezone.utc)
             return dt
-        # fallback parsing
+        # fallback parsing with more formats
         fmts = [
+            "%Y-%m-%d %H:%M:%S",
             "%Y-%m-%d %H:%M",
             "%Y/%m/%d %H:%M",
             "%Y%m%d %H:%M",
@@ -96,13 +108,15 @@ class QueryBuilder:
             "%Y%m%d",
             "%Y-%m",
             "%Y",
+            "%m/%d/%Y",  # US format
+            "%d/%m/%Y",  # European
         ]
         for fmt in fmts:
             try:
                 dt = datetime.strptime(date_input, fmt)
                 dt = dt.replace(tzinfo=timezone.utc)
                 return dt
-            except Exception:
+            except ValueError:
                 continue
         raise ValueError(f"Unrecognized date format: {date_input}")
 

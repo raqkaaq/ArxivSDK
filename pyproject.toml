@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "arxiv-sdk"
-version = "0.1.1"
+version = "0.2.0"
 description = "A small, synchronous Python SDK for interacting with the arXiv Atom API"
 authors = [{name = "Raqkaaq", email = "eryan97@raqkaaq.com"}]
 license = {text = "MIT"}
@@ -16,6 +16,10 @@ dependencies = [
     "pydantic>=2.0,<3.0",
     "python-dateutil>=2.8,<3.0"
 ]
+
+[project.optional-dependencies]
+async = ["aiohttp>=3.0,<4.0"]
+pdf = ["PyMuPDF>=1.20,<2.0"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
