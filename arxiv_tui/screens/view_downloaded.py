@@ -1,7 +1,7 @@
 """View downloaded paper screen."""
 from textual.containers import Vertical, ScrollableContainer
 from textual.screen import Screen
-from textual.widgets import Button, Static, Label
+from textual.widgets import Button, Static, Label, Header
 from textual import on
 
 import webbrowser
@@ -18,13 +18,12 @@ class ViewDownloadedScreen(Screen):
     }
 
     ScrollableContainer {
-        height: 100%;
+        height: auto;
     }
 
     Horizontal {
-        dock: bottom;
         height: auto;
-        padding: 1;
+        margin-top: 1;
     }
     """
 
@@ -34,6 +33,7 @@ class ViewDownloadedScreen(Screen):
         self.data = data
 
     def compose(self):
+        yield Header()
         filename = os.path.basename(self.pdf_path)
         with Vertical():
             yield Static(f"Downloaded Paper: {filename}", classes="title")
@@ -63,10 +63,13 @@ class ViewDownloadedScreen(Screen):
                 yield Button("Open in Browser", id="open_browser")
                 yield Button("Back", id="back")
 
+        yield Static("Arxiv SDK v0.2.0", classes="footer")
+
     @on(Button.Pressed, "#open_browser")
     def open_in_browser(self):
         """Open PDF in browser."""
-        webbrowser.open(f"file://{self.pdf_path}")
+        import os
+        webbrowser.open(f"file://{os.path.abspath(self.pdf_path)}")
         self.app.notify("Opened in browser", severity="information")
 
     @on(Button.Pressed, "#back")

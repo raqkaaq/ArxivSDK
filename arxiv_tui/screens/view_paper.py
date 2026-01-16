@@ -1,7 +1,7 @@
 """View paper screen."""
 from textual.containers import Vertical, Horizontal, ScrollableContainer
 from textual.screen import Screen
-from textual.widgets import Button, Static, Label
+from textual.widgets import Button, Static, Label, Header
 from textual import on
 
 import webbrowser
@@ -32,6 +32,7 @@ class ViewPaperScreen(Screen):
         self.paper = paper
 
     def compose(self):
+        yield Header()
         with Vertical():
             yield Static("Paper Details", classes="title")
             with ScrollableContainer():
@@ -44,10 +45,12 @@ class ViewPaperScreen(Screen):
                 yield Label(f"DOI: {self.paper.doi or 'N/A'}")
                 yield Label("Abstract:")
                 yield Static(self.paper.summary, classes="abstract")
-            with Horizontal():
-                yield Button("Download PDF", id="download", variant="primary")
-                yield Button("Open in Browser", id="open_browser")
-                yield Button("Back", id="back")
+        with Horizontal():
+            yield Button("Download PDF", id="download", variant="primary")
+            yield Button("Open in Browser", id="open_browser")
+            yield Button("Back", id="back")
+
+        yield Static("Arxiv SDK v0.2.0", classes="footer")
 
     @on(Button.Pressed, "#download")
     async def download_pdf(self):

@@ -20,6 +20,13 @@ class ArxivTUI(App):
     .title {
         text-align: center;
         margin: 1;
+        color: $primary;
+    }
+
+    .footer {
+        text-align: center;
+        margin: 1;
+        color: $secondary;
     }
 
     .abstract {
@@ -64,6 +71,10 @@ class ArxivTUI(App):
 
     DataTable {
         height: 100%;
+    }
+
+    ScrollableContainer {
+        scrollbar-size: 0;
     }
     """
 
