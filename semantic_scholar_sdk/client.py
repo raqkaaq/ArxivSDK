@@ -61,6 +61,7 @@ class SemanticScholarClient:
                     authors=[{"name": a["name"]} for a in item.get("authors", [])],
                     year=item.get("year"),
                     venue=item.get("venue"),
+                    pdf_url=item.get("openAccessPdf", {}).get("url"),
                 )
                 papers.append(paper)
             return papers
@@ -88,6 +89,7 @@ class SemanticScholarClient:
                 authors=[{"name": a["name"]} for a in data.get("authors", [])],
                 year=data.get("year"),
                 venue=data.get("venue"),
+                pdf_url=data.get("openAccessPdf", {}).get("url"),
                 references=[{"title": r.get("title"), "paperId": r["paperId"]} for r in data.get("references", [])],
                 citations=[{"title": c.get("title"), "paperId": c["paperId"]} for c in data.get("citations", [])],
             )
@@ -188,6 +190,7 @@ class SemanticScholarClient:
                     authors=[{"name": a["name"]} for a in item.get("authors", [])],
                     year=item.get("year"),
                     venue=item.get("venue"),
+                    pdf_url=item.get("openAccessPdf", {}).get("url"),
                 )
                 papers.append(paper)
             return papers

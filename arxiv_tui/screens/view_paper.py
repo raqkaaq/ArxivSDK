@@ -82,7 +82,7 @@ class PaperDetailsScreen(Screen):
                     yield Label("Abstract:")
                     yield Static(self.data.get('summary', 'No abstract available'), classes="abstract")
         with Horizontal():
-            if self.paper:
+            if self.paper and self.paper.pdf_url:
                 yield Button("Download PDF", id="download", variant="primary")
             yield Button("Open in Browser", id="open_browser")
             yield Button("Back", id="back")

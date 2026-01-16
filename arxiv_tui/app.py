@@ -58,6 +58,23 @@ class ArxivTUI(App):
         margin-bottom: 0;
     }
 
+    .date-row {
+        height: auto;
+    }
+
+    .date-select {
+        width: 12;
+        margin-right: 1;
+    }
+
+    .month-select {
+        width: 17;
+    }
+
+    Horizontal > Vertical {
+        margin-right: 2;
+    }
+
     Label {
         margin-bottom: 1;
     }
@@ -70,9 +87,7 @@ class ArxivTUI(App):
         height: 100%;
     }
 
-    ScrollableContainer {
-        scrollbar-size: 0 0;
-    }
+
 
     ListView {
         scrollbar-size: 0 0;
@@ -103,7 +118,7 @@ class ArxivTUI(App):
     def compose(self) -> ComposeResult:
         """Compose the app layout."""
         yield Header()
-        with TabbedContent():
+        with TabbedContent(id="main_container"):
             with TabPane("ArXiv Search", id="arxiv_search"):
                 yield SearchTab()
             with TabPane("Semantic Scholar Search", id="ss_search"):

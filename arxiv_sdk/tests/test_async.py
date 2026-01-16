@@ -5,7 +5,7 @@ import os
 from unittest.mock import Mock, patch, AsyncMock
 from arxiv_sdk.async_client import AsyncArxivClient
 from arxiv_sdk.query import QueryBuilder
-from arxiv_sdk.errors import ArxivDownloadError
+from academic_sdk.errors import AcademicDownloadError as ArxivDownloadError
 
 
 class AsyncIter:

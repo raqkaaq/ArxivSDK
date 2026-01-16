@@ -9,6 +9,7 @@ class Link(BaseModel):
     href: str
     title: Optional[str] = None
     rel: Optional[str] = None
+    type: Optional[str] = None
 
 
 class Author(BaseModel):
