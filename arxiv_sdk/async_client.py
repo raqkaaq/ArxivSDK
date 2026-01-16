@@ -9,8 +9,9 @@ import os
 
 import aiohttp
 
+from academic_sdk.models import Paper
+from academic_sdk.errors import AcademicAPIError, AcademicNetworkError, AcademicParseError, AcademicDownloadError
 from .models import ArxivPaper, ArxivResultSet
-from .errors import ArxivAPIError, ArxivNetworkError, ArxivParseError, ArxivDownloadError
 
 logger = logging.getLogger(__name__)
 

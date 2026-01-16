@@ -7,36 +7,17 @@ from urllib.parse import urlparse
 
 from pydantic import BaseModel, Field, field_validator
 
+from academic_sdk.models import Paper, Author, Link
+
 logger = logging.getLogger(__name__)
 
 
-class Author(BaseModel):
-    name: str
-    affiliation: Optional[str] = None
-
-    model_config = {"extra": "ignore"}
-
-
-class Link(BaseModel):
-    href: str
-    type: Optional[str] = None
-    rel: Optional[str] = None
-
-    model_config = {"extra": "ignore"}
-
-
-class ArxivPaper(BaseModel):
-    id: str
-    title: str = ""
-    summary: str = ""
-    authors: List[Author] = []
-    published: Optional[datetime] = None
-    updated: Optional[datetime] = None
-    links: List[Link] = []
-    primary_category: Optional[str] = Field(default=None, alias="arxiv_primary_category")
+class ArxivPaper(Paper):
+    # Inherit from academic_sdk.models.Paper
+    # Add arXiv specific fields
+    categories: Optional[List[str]] = None  # arXiv categories
     arxiv_comment: Optional[str] = None
     journal_ref: Optional[str] = None
-    doi: Optional[str] = None
 
     model_config = {"extra": "ignore"}
 

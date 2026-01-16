@@ -4,6 +4,7 @@ from textual.widgets import Header, Footer, TabbedContent, TabPane
 from textual.binding import Binding
 
 from .screens.search import SearchTab
+from .screens.semantic_scholar_search import SemanticScholarSearchTab
 from .screens.downloads import DownloadsTab
 from .screens.view_paper import PaperDetailsScreen
 
@@ -95,18 +96,22 @@ class ArxivTUI(App):
     def on_mount(self) -> None:
         """Set up on app start."""
         try:
-            from arxiv_sdk.async_client import AsyncArxivClient
-            self.client = AsyncArxivClient()
-        except ImportError:
             from arxiv_sdk.client import ArxivClient
             self.client = ArxivClient()
+        except ImportError:
+            from arxiv_sdk.async_client import AsyncArxivClient
+            self.client = AsyncArxivClient()
+        from semantic_scholar_sdk.client import SemanticScholarClient
+        self.ss_client = SemanticScholarClient()
 
     def compose(self) -> ComposeResult:
         """Compose the app layout."""
         yield Header()
         with TabbedContent():
-            with TabPane("Search", id="search"):
+            with TabPane("ArXiv Search", id="arxiv_search"):
                 yield SearchTab()
+            with TabPane("Semantic Scholar Search", id="ss_search"):
+                yield SemanticScholarSearchTab()
             with TabPane("Downloaded", id="downloads"):
                 yield DownloadsTab()
         yield Footer()

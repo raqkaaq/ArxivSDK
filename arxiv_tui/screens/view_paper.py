@@ -69,7 +69,15 @@ class PaperDetailsScreen(Screen):
                         yield Label(f"Updated: {updated.strftime('%Y-%m-%d') if hasattr(updated, 'strftime') else str(updated)}")
                     else:
                         yield Label("Updated: N/A")
-                    yield Label(f"Category: {self.data.get('primary_category', 'N/A')}")
+                    # Show categories or venue
+                    if self.data.get('primary_category'):
+                        yield Label(f"Category: {self.data.get('primary_category', 'N/A')}")
+                    if self.data.get('venue'):
+                        yield Label(f"Venue: {self.data.get('venue', 'N/A')}")
+                    if self.data.get('citation_count') is not None:
+                        yield Label(f"Citations: {self.data.get('citation_count', 'N/A')}")
+                    if self.data.get('influential_citation_count') is not None:
+                        yield Label(f"Influential Citations: {self.data.get('influential_citation_count', 'N/A')}")
                     yield Label(f"DOI: {self.data.get('doi') or 'N/A'}")
                     yield Label("Abstract:")
                     yield Static(self.data.get('summary', 'No abstract available'), classes="abstract")

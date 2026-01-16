@@ -1,0 +1,1 @@
+"""Shared base for academic SDKs."""

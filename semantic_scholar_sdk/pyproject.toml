@@ -3,16 +3,18 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "arxiv-tui"
+name = "semantic-scholar-sdk"
 version = "0.1.0"
-description = "Textual-based TUI for searching and managing arXiv and Semantic Scholar papers"
+description = "SDK for Semantic Scholar Academic Graph API"
 authors = [{name = "Raqkaaq", email = "eryan97@raqkaaq.com"}]
 license = {text = "MIT"}
 readme = "README.md"
 requires-python = ">=3.8"
 dependencies = [
-    "arxiv-sdk>=0.2.0",
-    "textual>=0.50,<1.0"
+    "academic_sdk>=0.1.0",
+    "requests>=2.0,<3.0",
+    "pydantic>=2.0,<3.0",
+    "python-dateutil>=2.8,<3.0"
 ]
 
 [project.urls]
@@ -21,7 +23,4 @@ Repository = "https://github.com/raqkaaq/ArxivSDK"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["arxiv_tui"]
-
-[tool.setuptools.package-data]
-arxiv_tui = ["py.typed"]
+include = ["semantic_scholar_sdk"]

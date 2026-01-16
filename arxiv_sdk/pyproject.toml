@@ -23,6 +23,7 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Information Analysis",
 ]
 dependencies = [
+    "academic_sdk>=0.1.0",
     "requests>=2.0,<3.0",
     "feedparser>=6.0,<7.0",
     "pydantic>=2.0,<3.0",

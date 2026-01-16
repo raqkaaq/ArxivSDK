@@ -1,0 +1,1 @@
+"""Semantic Scholar SDK for academic paper search and retrieval."""
