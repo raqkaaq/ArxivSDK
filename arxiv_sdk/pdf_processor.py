@@ -18,17 +18,29 @@ class ArxivPDFProcessor:
         if fitz is None:
             raise ImportError("PyMuPDF is required for PDF processing. Install with: pip install PyMuPDF")
 
-    def extract_text(self, pdf_path: str) -> str:
-        """Extract all text from the PDF."""
+    def get_metadata(self, pdf_path: str) -> Dict[str, Any]:
+        """Get PDF metadata."""
         try:
             doc = fitz.open(pdf_path)
-            text = ""
-            for page in doc:
-                text += page.get_text()
+            metadata = doc.metadata
+            doc.close()
+            return dict(metadata)
+        except Exception as e:
+            logger.error("Failed to get metadata from %s: %s", pdf_path, e)
+            raise
+
+    def extract_first_page_text(self, pdf_path: str) -> str:
+        """Extract text from the first page of the PDF."""
+        try:
+            doc = fitz.open(pdf_path)
+            if doc.page_count > 0:
+                text = doc[0].get_text()
+            else:
+                text = ""
             doc.close()
             return text
         except Exception as e:
-            logger.error("Failed to extract text from %s: %s", pdf_path, e)
+            logger.error("Failed to extract first page text from %s: %s", pdf_path, e)
             raise
 
     def extract_tables(self, pdf_path: str) -> List[Dict[str, Any]]:

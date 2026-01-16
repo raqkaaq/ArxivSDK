@@ -258,13 +258,23 @@ class ArxivClient:
                         return full
                     try:
                         with open(full, 'wb') as fh:
+                            bytes_written = 0
                             for chunk in r.iter_content(chunk_size=8192):
                                 if chunk:
                                     fh.write(chunk)
-                        # Post-download validation
-                        if os.path.getsize(full) == 0:
+                                    bytes_written += len(chunk)
+                        if bytes_written == 0:
                             os.remove(full)
                             raise ArxivDownloadError("Downloaded file is empty")
+
+                        # Save paper metadata as JSON
+                        json_path = full.replace('.pdf', '.json')
+                        try:
+                            with open(json_path, 'w', encoding='utf-8') as jf:
+                                jf.write(paper.model_dump_json(indent=2))
+                        except Exception as e:
+                            logger.warning("Failed to save metadata JSON for %s: %s", full, e)
+                            # Don't fail the download for this
                     except OSError as e:
                         if os.path.exists(full):
                             os.remove(full)

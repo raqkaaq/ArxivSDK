@@ -1,6 +1,6 @@
 # ArxivSDK
 
-A small Python SDK for interacting with the arXiv Atom API. The SDK provides typed models, a fluent query builder, synchronous and asynchronous HTTP clients, an expanded category taxonomy, PDF processing, and advanced query options.
+A small Python SDK for interacting with the arXiv Atom API. The SDK provides typed models, a fluent query builder, synchronous and asynchronous HTTP clients, an expanded category taxonomy, PDF processing, advanced query options, and an interactive TUI.
 
 **Quick overview**
 - `ArxivClient` ([ArxivSDK/client.py](ArxivSDK/client.py)): synchronous HTTP client. Methods: `search()`, `get_by_id()`, `download_pdf()`.
@@ -89,6 +89,21 @@ Advanced queries:
 qb = QueryBuilder().title("quantum").comment("review").doi("10.1234/example").date_range("last week", "today")
 ```
 
+TUI (Interactive Terminal UI):
+
+```bash
+pip install arxiv-tui  # Installs TUI package (requires arxiv-sdk)
+arxiv-tui --downloads ./data  # Launches TUI
+```
+
+Or from source:
+```bash
+pip install ./arxiv_tui  # Install TUI
+python main.py --downloads ./data
+```
+
+Navigate with keyboard: Search papers, browse results, view details, download PDFs, manage downloads.
+
 Filename & storage behavior
 ---------------------------
 - Files are saved under a hub path you provide as `dest_path`.
@@ -111,9 +126,15 @@ Testing
 
 ```bash
 export PYTHONPATH=$(pwd)
-pip install -r ArxivSDK/requirements.txt
+pip install -e .  # Install SDK
 pip install aiohttp PyMuPDF  # for optional features
-pytest ArxivSDK/tests -q
+pytest tests -q
+```
+
+For TUI tests:
+```bash
+pip install ./arxiv_tui
+pytest arxiv_tui/tests  # If added
 ```
 
 Extending categories

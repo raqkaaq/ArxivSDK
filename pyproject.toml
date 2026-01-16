@@ -10,16 +10,6 @@ authors = [{name = "Raqkaaq", email = "eryan97@raqkaaq.com"}]
 license = {text = "MIT"}
 readme = "README.md"
 requires-python = ">=3.8"
-dependencies = [
-    "requests>=2.0,<3.0",
-    "feedparser>=6.0,<7.0",
-    "pydantic>=2.0,<3.0",
-    "python-dateutil>=2.8,<3.0"
-]
-
-[project.optional-dependencies]
-async = ["aiohttp>=3.0,<4.0"]
-pdf = ["PyMuPDF>=1.20,<2.0"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
@@ -32,6 +22,16 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Topic :: Scientific/Engineering :: Information Analysis",
 ]
+dependencies = [
+    "requests>=2.0,<3.0",
+    "feedparser>=6.0,<7.0",
+    "pydantic>=2.0,<3.0",
+    "python-dateutil>=2.8,<3.0"
+]
+
+[project.optional-dependencies]
+async = ["aiohttp>=3.0,<4.0"]
+pdf = ["PyMuPDF>=1.20,<2.0"]
 
 [project.urls]
 Homepage = "https://github.com/raqkaaq/ArxivSDK"

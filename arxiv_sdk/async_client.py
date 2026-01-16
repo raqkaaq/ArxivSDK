@@ -183,6 +183,9 @@ class AsyncArxivClient:
         async def _do_request():
             async with self.session.get(url, timeout=aiohttp.ClientTimeout(total=timeout), headers={"User-Agent": self.user_agent}) as r:
                 r.raise_for_status()
+                # Check for empty content-length
+                if r.headers.get('content-length') == '0':
+                    raise ArxivDownloadError("Empty response")
                 filename = None
                 cd = r.headers.get('content-disposition')
                 if cd:
@@ -251,13 +254,24 @@ class AsyncArxivClient:
 
                 try:
                     with open(full, 'wb') as fh:
-                        async for chunk in r.aiter_bytes(chunk_size=8192):
+                        bytes_written = 0
+                        async for chunk in r.content.iter_chunked(8192):
                             if chunk:
                                 fh.write(chunk)
+                                bytes_written += len(chunk)
                     # Validation
-                    if os.path.getsize(full) == 0:
+                    if bytes_written == 0:
                         os.remove(full)
                         raise ArxivDownloadError("Downloaded file is empty")
+
+                    # Save paper metadata as JSON
+                    json_path = full.replace('.pdf', '.json')
+                    try:
+                        with open(json_path, 'w', encoding='utf-8') as jf:
+                            jf.write(paper.model_dump_json(indent=2))
+                    except Exception as e:
+                        logger.warning("Failed to save metadata JSON for %s: %s", full, e)
+                        # Don't fail the download for this
                 except OSError as e:
                     if os.path.exists(full):
                         os.remove(full)
