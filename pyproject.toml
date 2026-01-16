@@ -4,17 +4,17 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "arxiv-sdk"
-version = "0.1.0"
+version = "0.1.1"
 description = "A small, synchronous Python SDK for interacting with the arXiv Atom API"
 authors = [{name = "Raqkaaq", email = "eryan97@raqkaaq.com"}]
 license = {text = "MIT"}
 readme = "README.md"
 requires-python = ">=3.8"
 dependencies = [
-    "requests>=2.0",
-    "feedparser>=6.0", 
-    "pydantic>=2.0",
-    "python-dateutil>=2.8"
+    "requests>=2.0,<3.0",
+    "feedparser>=6.0,<7.0",
+    "pydantic>=2.0,<3.0",
+    "python-dateutil>=2.8,<3.0"
 ]
 classifiers = [
     "Development Status :: 4 - Beta",

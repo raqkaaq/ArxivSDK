@@ -5,6 +5,8 @@ import pytest
 from arxiv_sdk import ArxivClient
 from arxiv_sdk.query import QueryBuilder
 
+from dotenv import load_dotenv
+load_dotenv()
 
 RUN_LIVE = os.environ.get("ARXIV_SDK_RUN_LIVE_TESTS", "0").lower() in ("1", "true", "yes")
 

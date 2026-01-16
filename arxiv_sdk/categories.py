@@ -9,7 +9,10 @@ Use like:
 The Enum values are the standard arXiv category codes (e.g. ``cs.LG``).
 This file is intentionally a compact, curated list — extend as needed.
 """
+import logging
 from enum import Enum
+
+logger = logging.getLogger(__name__)
 
 
 class Category(str, Enum):

@@ -2,8 +2,12 @@ from __future__ import annotations
 from typing import List, Optional
 from datetime import datetime
 import re
+import logging
+from urllib.parse import urlparse
 
 from pydantic import BaseModel, Field, field_validator
+
+logger = logging.getLogger(__name__)
 
 
 class Author(BaseModel):
@@ -69,18 +73,30 @@ class ArxivPaper(BaseModel):
     def pdf_url(self) -> Optional[str]:
         for l in self.links:
             if l.type == "application/pdf":
-                # ensure URL ends with .pdf; some feeds provide a PDF-like URL
-                # that lacks the .pdf suffix (e.g. /pdf/2101.00001v2). Normalize
-                # by appending .pdf when appropriate.
                 href = l.href
-                if href and not href.lower().endswith('.pdf'):
-                    # only append when URL path contains '/pdf/' or endswith a version
-                    if '/pdf/' in href or href.rstrip('/').split('/')[-1].startswith('20') or href.rstrip('/').split('/')[-1].startswith('arXiv') or href.rstrip('/').split('/')[-1].startswith('v') or re.search(r'\d{4}\.\d{5}', href):
-                        return href + '.pdf'
-                return href
+                if href:
+                    parsed = urlparse(href)
+                    if parsed.scheme not in ('http', 'https'):
+                        logger.warning("Invalid PDF URL scheme: %s", href)
+                        continue
+                    # ensure URL ends with .pdf; some feeds provide a PDF-like URL
+                    # that lacks the .pdf suffix (e.g. /pdf/2101.00001v2). Normalize
+                    # by appending .pdf when appropriate.
+                    if not href.lower().endswith('.pdf'):
+                        # only append when URL path contains '/pdf/' or matches arXiv patterns
+                        path = parsed.path.rstrip('/')
+                        last_part = path.split('/')[-1]
+                        if ('/pdf/' in href or last_part.startswith('20') or last_part.startswith('arXiv') or
+                            last_part.startswith('v') or re.search(r'\d{4}\.\d{5}', last_part)):
+                            href += '.pdf'
+                    return href
             # sometimes rel/title indicate pdf
             if (l.rel and l.rel.lower() == "related") and l.href:
                 href = l.href
+                parsed = urlparse(href)
+                if parsed.scheme not in ('http', 'https'):
+                    logger.warning("Invalid related PDF URL scheme: %s", href)
+                    continue
                 if href.lower().endswith('.pdf'):
                     return href
                 if '/pdf/' in href:
@@ -90,7 +106,12 @@ class ArxivPaper(BaseModel):
             # id often like http://arxiv.org/abs/XXXX -> pdf URL at /pdf/XXXX
             m = re.search(r"/abs/(.+)$", self.id)
             if m:
-                return f"https://arxiv.org/pdf/{m.group(1)}.pdf"
+                pdf_url = f"https://arxiv.org/pdf/{m.group(1)}.pdf"
+                # Validate the constructed URL
+                if urlparse(pdf_url).scheme == 'https':
+                    return pdf_url
+                else:
+                    logger.warning("Constructed invalid PDF URL: %s", pdf_url)
         return None
 
     @property

@@ -2,11 +2,11 @@ from __future__ import annotations
 from typing import List, Optional, Union
 from datetime import datetime, timezone, timedelta
 import re
+import logging
 
-try:
-    from dateutil import parser as _dateutil_parser
-except Exception:
-    _dateutil_parser = None
+from dateutil import parser as _dateutil_parser
+
+logger = logging.getLogger(__name__)
 
 
 def _quote(text: str) -> str:
