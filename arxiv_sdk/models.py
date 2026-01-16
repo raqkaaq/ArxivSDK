@@ -5,21 +5,39 @@ import re
 import logging
 from urllib.parse import urlparse
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 from academic_sdk.models import Paper, Author, Link
 
 logger = logging.getLogger(__name__)
 
 
+class Category(BaseModel):
+    """Represents an arXiv category tag."""
+    term: str
+    scheme: Optional[str] = None
+    label: Optional[str] = None
+
+
 class ArxivPaper(Paper):
     # Inherit from academic_sdk.models.Paper
     # Add arXiv specific fields
-    categories: Optional[List[str]] = None  # arXiv categories
+    tags: Optional[List[Category]] = None  # Raw arXiv category tags
+    categories: Optional[List[str]] = Field(default=None)  # Override to allow setting from tags
+    primary_category: Optional[str] = Field(default=None)  # Override
     arxiv_comment: Optional[str] = None
     journal_ref: Optional[str] = None
 
     model_config = {"extra": "ignore"}
+
+    @model_validator(mode='after')
+    def set_categories_from_tags(self):
+        if self.tags:
+            if not self.categories:
+                self.categories = [tag.term for tag in self.tags]
+            if not self.primary_category:
+                self.primary_category = self.tags[0].term
+        return self
 
     @field_validator("title", mode="before")
     def strip_title(cls, v):

@@ -149,7 +149,8 @@ class AsyncArxivClient:
                 parse_errors = []
                 for idx, entry in enumerate(feed.entries):
                     try:
-                        papers.append(ArxivPaper.model_validate(entry))
+                        paper = ArxivPaper.model_validate(entry)
+                        papers.append(paper)
                     except (ValueError, TypeError) as e:
                         logger.warning("Failed to parse entry at index %d: %s", idx, e)
                         parse_errors.append({'index': idx, 'error': str(e)})
@@ -179,7 +180,8 @@ class AsyncArxivClient:
                 if not feed.entries:
                     return None
                 try:
-                    return ArxivPaper.model_validate(feed.entries[0])
+                    entry = feed.entries[0]
+                    return ArxivPaper.model_validate(entry)
                 except (ValueError, TypeError) as e:
                     raise ArxivParseError(e)
 

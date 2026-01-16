@@ -176,7 +176,8 @@ class ArxivClient:
         if not feed.entries:
             return None
         try:
-            return ArxivPaper.model_validate(feed.entries[0])
+            entry = feed.entries[0]
+            return ArxivPaper.model_validate(entry)
         except Exception as e:
             raise ArxivParseError(e)
 
