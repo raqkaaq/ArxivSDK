@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "arxiv-sdk"
+version = "0.1.0"
+description = "A small, synchronous Python SDK for interacting with the arXiv Atom API"
+authors = [{name = "Raqkaaq", email = "eryan97@raqkaaq.com"}]
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+    "requests>=2.0",
+    "feedparser>=6.0", 
+    "pydantic>=2.0",
+    "python-dateutil>=2.8"
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+]
+
+[project.urls]
+Homepage = "https://github.com/raqkaaq/ArxivSDK"
+Repository = "https://github.com/raqkaaq/ArxivSDK"
+Issues = "https://github.com/raqkaaq/ArxivSDK/issues"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["arxiv_sdk"]
+
+[tool.setuptools.package-data]
+ArxivSDK = ["py.typed"]
