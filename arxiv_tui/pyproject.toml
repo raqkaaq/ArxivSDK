@@ -12,7 +12,8 @@ readme = "README.md"
 requires-python = ">=3.8"
 dependencies = [
     "arxiv-sdk>=0.2.0",
-    "textual>=0.50,<1.0"
+    "textual>=6.0.0",
+    "textual-timepiece>=0.6.0"
 ]
 
 [project.urls]

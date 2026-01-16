@@ -1,6 +1,12 @@
-# ArxivSDK
+# ArxivAgent SDK
 
-A small Python SDK for interacting with the arXiv Atom API. The SDK provides typed models, a fluent query builder, synchronous and asynchronous HTTP clients, an expanded category taxonomy, PDF processing, advanced query options, and an interactive TUI.
+A comprehensive Python SDK suite for academic paper search and management. Supports arXiv (Atom API) and Semantic Scholar (Graph API), with shared models, error handling, and an interactive TUI for unified access.
+
+The monorepo includes:
+- `academic_sdk`: Shared models and errors
+- `arxiv_sdk`: arXiv Atom API client
+- `semantic_scholar_sdk`: Semantic Scholar Graph API client
+- `arxiv_tui`: Textual-based TUI for searching and managing papers
 
 **Quick overview**
 - `ArxivClient` ([ArxivSDK/client.py](ArxivSDK/client.py)): synchronous HTTP client. Methods: `search()`, `get_by_id()`, `download_pdf()`.
@@ -89,6 +95,22 @@ Advanced queries:
 qb = QueryBuilder().title("quantum").comment("review").doi("10.1234/example").date_range("last week", "today")
 ```
 
+Semantic Scholar SDK:
+
+```python
+from semantic_scholar_sdk import SemanticScholarClient
+
+client = SemanticScholarClient()  # Set SEMANTIC_SCHOLAR_API_KEY for higher limits
+papers = client.search("deep learning", limit=10)
+paper = client.get_by_id("123456789")
+citations = client.get_paper_citations("123456789")
+references = client.get_paper_references("123456789")
+authors = client.search_authors("Ian Goodfellow")
+author = client.get_author_by_id("123456")
+suggestions = client.autocomplete("machine learning")
+batch = client.batch_get_papers(["id1", "id2"])
+```
+
 TUI (Interactive Terminal UI):
 
 ```bash
@@ -102,7 +124,7 @@ pip install ./arxiv_tui  # Install TUI
 python main.py --downloads ./data
 ```
 
-Navigate with keyboard: Search papers, browse results, view details, download PDFs, manage downloads.
+Navigate with keyboard: Switch between arXiv and Semantic Scholar, search papers, browse results, view details, download PDFs, manage downloads.
 
 Filename & storage behavior
 ---------------------------
@@ -119,22 +141,17 @@ QueryBuilder highlights
 
 Testing
 -------
-- Unit tests live under `ArxivSDK/tests/`.
-- Live integration tests that make real API calls are guarded by the environment variable `ARXIV_SDK_RUN_LIVE_TESTS=1` — set it to run live queries.
-- Async tests require `pytest-asyncio`.
-- Run unit tests for the SDK with:
+- Unit tests for arxiv_sdk under `arxiv_sdk/tests/`.
+- Unit tests for semantic_scholar_sdk under `semantic_scholar_sdk/tests/`.
+- Live integration tests guarded by environment variables (e.g., `ARXIV_SDK_RUN_LIVE_TESTS=1` for arXiv).
+- Run unit tests:
 
 ```bash
-export PYTHONPATH=$(pwd)
-pip install -e .  # Install SDK
-pip install aiohttp PyMuPDF  # for optional features
-pytest tests -q
-```
-
-For TUI tests:
-```bash
-pip install ./arxiv_tui
-pytest arxiv_tui/tests  # If added
+pip install -e academic_sdk/
+pip install -e arxiv_sdk/
+pip install -e semantic_scholar_sdk/
+pip install -e arxiv_tui/
+pytest arxiv_sdk/tests/ semantic_scholar_sdk/tests/ -q
 ```
 
 Extending categories
@@ -148,7 +165,7 @@ Contributing
 
 License & notes
 ---------------
-This repository includes minimal dependencies (requests, feedparser, pydantic). Optional dependencies: aiohttp for async, PyMuPDF for PDF processing. The SDK is intended as an easy-to-use layer over the arXiv Atom API — follow arXiv API rules (rate limits and polite querying).
+This monorepo provides SDKs for arXiv and Semantic Scholar APIs with minimal dependencies (requests, feedparser, pydantic). Follow API rules: arXiv (polite querying), Semantic Scholar (rate limits, optional API key for higher limits).
 
 v0.2.0 Changes
 ---------------

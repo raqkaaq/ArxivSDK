@@ -1,6 +1,7 @@
 """Search tab for the TUI."""
 from textual.containers import Vertical, Horizontal, ScrollableContainer
 from textual.widgets import Input, Button, Select, Label, Static, DataTable
+from textual_timepiece import DatePicker
 from textual import on
 
 from arxiv_sdk.categories import Category, CATEGORY_DESCRIPTIONS
@@ -30,6 +31,10 @@ class SearchTab(Vertical):
                         prompt="Select category",
                         id="category"
                     )
+                    yield Label("Start Date:")
+                    yield DatePicker(id="start_date")
+                    yield Label("End Date:")
+                    yield DatePicker(id="end_date")
                     yield Label("Max Results:")
                     yield Input(value="10", placeholder="Max results", id="max_results")
                     yield Button("Search", id="search", variant="primary")
@@ -43,6 +48,10 @@ class SearchTab(Vertical):
         author = self.query_one("#author", Input).value
         abstract = self.query_one("#abstract", Input).value
         category = self.query_one("#category", Select).value
+        start_date_picker = self.query_one("#start_date", DatePicker)
+        end_date_picker = self.query_one("#end_date", DatePicker)
+        start_date = start_date_picker.value.isoformat() if start_date_picker.value else None
+        end_date = end_date_picker.value.isoformat() if end_date_picker.value else None
         max_results = int(self.query_one("#max_results", Input).value or 10)
 
         # Build query
@@ -56,6 +65,8 @@ class SearchTab(Vertical):
             qb.abstract(abstract)
         if category:
             qb.category(category)
+        if start_date and end_date:
+            qb.date_range(start_date, end_date)
 
         # Perform search
         try:

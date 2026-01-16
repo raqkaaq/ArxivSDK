@@ -55,7 +55,7 @@ class ArxivTUI(App):
     }
 
     Input {
-        margin-bottom: 1;
+        margin-bottom: 0;
     }
 
     Label {
@@ -95,12 +95,8 @@ class ArxivTUI(App):
 
     def on_mount(self) -> None:
         """Set up on app start."""
-        try:
-            from arxiv_sdk.client import ArxivClient
-            self.client = ArxivClient()
-        except ImportError:
-            from arxiv_sdk.async_client import AsyncArxivClient
-            self.client = AsyncArxivClient()
+        from arxiv_sdk.async_client import AsyncArxivClient
+        self.client = AsyncArxivClient()
         from semantic_scholar_sdk.client import SemanticScholarClient
         self.ss_client = SemanticScholarClient()
 
