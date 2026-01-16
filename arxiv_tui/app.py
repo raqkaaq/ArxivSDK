@@ -5,7 +5,7 @@ from textual.binding import Binding
 
 from .screens.search import SearchTab
 from .screens.downloads import DownloadsTab
-from .screens.view_paper import ViewPaperScreen
+from .screens.view_paper import PaperDetailsScreen
 
 
 class ArxivTUI(App):
@@ -23,11 +23,7 @@ class ArxivTUI(App):
         color: $primary;
     }
 
-    .footer {
-        text-align: center;
-        margin: 1;
-        color: $secondary;
-    }
+
 
     .abstract {
         height: 10;
@@ -74,7 +70,15 @@ class ArxivTUI(App):
     }
 
     ScrollableContainer {
-        scrollbar-size: 0;
+        scrollbar-size: 0 0;
+    }
+
+    ListView {
+        scrollbar-size: 0 0;
+    }
+
+    #downloads_panel {
+        overflow: hidden;
     }
     """
 

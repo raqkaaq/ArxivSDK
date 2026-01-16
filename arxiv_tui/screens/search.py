@@ -89,5 +89,5 @@ class SearchTab(Vertical):
         paper_id = event.row_key
         paper = next((p for p in self.papers if p.id == paper_id), None)
         if paper:
-            from .view_paper import ViewPaperScreen
-            self.app.push_screen(ViewPaperScreen(paper))
+            from .view_paper import PaperDetailsScreen
+            self.app.push_screen(PaperDetailsScreen(paper=paper))

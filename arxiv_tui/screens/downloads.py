@@ -15,8 +15,9 @@ class DownloadsTab(Vertical):
 
     def compose(self):
         self.downloads_path = self.app.downloads_path
-        yield Static("Downloaded Papers", classes="title")
-        yield ListView(id="downloads_list")
+        with Vertical(id="downloads_panel"):
+            yield Static("Downloaded Papers", classes="title")
+            yield ListView(id="downloads_list")
 
     def on_mount(self):
         self.load_downloads()
@@ -57,6 +58,7 @@ class DownloadsTab(Vertical):
                 data = {'summary': 'Failed to load metadata'}
         else:
             data = {'summary': 'No metadata available'}
-        from .view_downloaded import ViewDownloadedScreen
-        self.app.push_screen(ViewDownloadedScreen(pdf_path, data))
+        from .view_paper import PaperDetailsScreen
+        filename = os.path.basename(pdf_path)
+        self.app.push_screen(PaperDetailsScreen(data=data, filename=filename, pdf_path=pdf_path))
 
