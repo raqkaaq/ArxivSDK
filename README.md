@@ -12,7 +12,7 @@ A small Python SDK for interacting with the arXiv Atom API. The SDK provides typ
 - `ArxivPDFProcessor` ([ArxivSDK/pdf_processor.py](ArxivSDK/pdf_processor.py)): PDF text/table extraction and metadata using PyMuPDF.
 
 **Design principles**
-- Synchronous by default (requests + feedparser). Easy to extend for async in future.
+- Synchronous by default (requests + feedparser). Async support available via AsyncArxivClient.
 - Convert Atom feed entries into typed Pydantic models immediately for safe access.
 - Keep behavior explicit and predictable (e.g., `download_pdf` requires an existing hub directory).
 
@@ -98,9 +98,9 @@ Filename & storage behavior
 
 QueryBuilder highlights
 -----------------------
-- Fielded searches: `title`, `author`, `abstract`, `comment`, `journal_ref`, `category`, `report_number`.
+- Fielded searches: `title`, `author`, `abstract`, `comment`, `journal_ref`, `report_number`, `doi`, `category`.
 - Boolean operators: `and_()`, `or_()`, `andnot_()` and `group()` for parentheses.
-- `date_range(start, end)` accepts many human-friendly date formats and normalizes to arXiv's `submittedDate:[YYYYMMDDHHMM TO YYYYMMDDHHMM]` format.
+- `date_range(start, end)` accepts many human-friendly date formats (including relative like 'last week', 'today') and normalizes to arXiv's `submittedDate:[YYYYMMDDHHMM TO YYYYMMDDHHMM]` format.
 
 Testing
 -------
@@ -118,14 +118,23 @@ pytest ArxivSDK/tests -q
 
 Extending categories
 --------------------
-The included `Category` enum is a compact, curated set of common codes. To support the full arXiv taxonomy you can either extend `ArxivSDK/categories.py` or generate it from the official taxonomy page.
+The `Category` enum includes the full arXiv taxonomy (150+ codes) with search helpers. Use `search_categories()` to find categories by keyword or description.
 
 Contributing
 ------------
 - Follow PEP8 and keep changes focused. Tests should accompany behavior changes.
-- For large changes (async API, extensive taxonomy generation) open an issue first to discuss design tradeoffs.
+- For large changes (extensive taxonomy generation) open an issue first to discuss design tradeoffs.
 
 License & notes
 ---------------
 This repository includes minimal dependencies (requests, feedparser, pydantic). Optional dependencies: aiohttp for async, PyMuPDF for PDF processing. The SDK is intended as an easy-to-use layer over the arXiv Atom API — follow arXiv API rules (rate limits and polite querying).
+
+v0.2.0 Changes
+---------------
+- Added AsyncArxivClient with rate limiting (1 req/3 sec) and retries.
+- Expanded Category enum to full arXiv taxonomy (150+ codes) with search helpers.
+- Introduced ArxivPDFProcessor for PDF text/table extraction and metadata using PyMuPDF.
+- Extended QueryBuilder with doi(), improved date parsing (relative dates), and validation.
+- Enhanced error handling, logging, and testing throughout.
+
 # ArxivSDK
